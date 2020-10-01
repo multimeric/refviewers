@@ -68,12 +68,18 @@ function renderWorkList(value){
         );
 }
 
+function sortByLength(order){
+    return function(a, b) {
+        return (a.data.length - b.data.length) * (order === 'asc' ? 1 : -1);
+    }
+}
+
 /**
  * Takes a list of publication objects and returns a react element that visualises the length of items
  * @param value
  */
 function renderCount(value){
-    return value.length;
+    return value.length.toString();
 }
 
 /**
@@ -212,7 +218,8 @@ export default function App() {
                                     options: {
                                         sort: true,
                                         sortDirection: 'desc',
-                                        customBodyRender: renderCount
+                                        customBodyRender: renderCount,
+                                        sortCompare: sortByLength
                                     }
                                 },
                                 {
@@ -229,7 +236,8 @@ export default function App() {
                                     label: 'Total First Authorships',
                                     options: {
                                         sort: true,
-                                        customBodyRender: renderCount
+                                        customBodyRender: renderCount,
+                                        sortCompare: sortByLength
                                     }
                                 },
                                 {
@@ -246,7 +254,8 @@ export default function App() {
                                     label: 'Total Last Authorships',
                                     options: {
                                         sort: true,
-                                        customBodyRender: renderCount
+                                        customBodyRender: renderCount,
+                                        sortCompare: sortByLength
                                     }
                                 },
                             ]}
