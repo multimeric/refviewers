@@ -192,6 +192,9 @@ export default function App() {
                                     label: 'Full Name',
                                     options: {
                                         sort: false,
+                                        customBodyRenderLite(dataIndex, rowIndex){
+                                            return <a href={encodeURI(`https://scholar.google.com/scholar?q=author:"${authors[dataIndex].fullName}"`)}>{authors[dataIndex].fullName}</a>
+                                        }
                                     }
                                 },
                                 {
