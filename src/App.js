@@ -43,30 +43,37 @@ class Author {
         this.firstAuthorships = [];
         this.lastAuthorships = [];
     }
+}
 
-    get numAuthorships() {
-        return this.authorships.length;
-    }
+/**
+ * Returns a sanitized string to use as the name of a work
+ * @returns {*}
+ */
+function workDisplayName(work){
+    return sanitizeHtml(work.title, {
+        allowedTags: [],
+        allowedAttributes: {}
+    });
+}
 
-    get textAuthorships() {
-        return this.authorships.join(', ');
-    }
+/**
+ * Takes a list of publication objects and returns a react element that visualises this
+ * @param value
+ */
+function renderWorkList(value){
+    return (
+            <>
+            { value.map(work => <Link href={work.URL}>{workDisplayName(work)} </Link>) }
+            </>
+        );
+}
 
-    get numFirstAuthorships() {
-        return this.firstAuthorships.length;
-    }
-
-    get textFirstAuthorships() {
-        return this.firstAuthorships.join(', ');
-    }
-
-    get numLastAuthorships() {
-        return this.lastAuthorships.length;
-    }
-
-    get textLastAuthorships() {
-        return this.lastAuthorships.join(', ');
-    }
+/**
+ * Takes a list of publication objects and returns a react element that visualises the length of items
+ * @param value
+ */
+function renderCount(value){
+    return value.length;
 }
 
 /**
@@ -95,12 +102,7 @@ function getAuthors(citations) {
         if (!Array.isArray(work.author)) {
             continue;
         }
-        const workTitle = sanitizeHtml(work.title, {
-            allowedTags: [],
-            allowedAttributes: {}
-        });
         work.author.forEach((author, i) => {
-
             const authorLookup = authorId(author);
             let authorObj;
             if (!authors.has(authorLookup)) {
@@ -111,14 +113,13 @@ function getAuthors(citations) {
                 authorObj = authors.get(authorLookup);
             }
 
-            authorObj.authorships.push(workTitle);
+            authorObj.authorships.push(work);
             if (i === 0) {
-                authorObj.firstAuthorships.push(workTitle);
+                authorObj.firstAuthorships.push(work);
             }
             if (i === work.author.length - 1) {
-                authorObj.lastAuthorships.push(workTitle);
+                authorObj.lastAuthorships.push(work);
             }
-
         });
     }
 
@@ -150,7 +151,7 @@ export default function App() {
                 <Grid container spacing={2} alignItems={'center'} direction={'column'}>
                     <Grid item>
                         <Typography variant="body1" component="h1" gutterBottom>
-                            refviewers is a simple browser utility for recommending reviewers for your manuscript, in
+                            <code>refviewers</code> is a simple browser utility for recommending reviewers for your manuscript, in
                             case you are submitting a paper to a journal that requires this.
                         </Typography>
                         <Typography variant="body1" component="h1" gutterBottom>
@@ -193,53 +194,59 @@ export default function App() {
                                     options: {
                                         sort: false,
                                         customBodyRenderLite(dataIndex, rowIndex){
-                                            return <a href={encodeURI(`https://scholar.google.com/scholar?q=author:"${authors[dataIndex].fullName}"`)}>{authors[dataIndex].fullName}</a>
+                                            return <Link href={encodeURI(`https://scholar.google.com/scholar?q=author:"${authors[dataIndex].fullName}"`)}>{authors[dataIndex].fullName}</Link>
                                         }
                                     }
                                 },
                                 {
-                                    name: 'textAuthorships',
+                                    name: 'authorships',
                                     label: 'All Authorships',
                                     options: {
                                         sort: false,
+                                        customBodyRender: renderWorkList
                                     }
                                 },
                                 {
-                                    name: 'numAuthorships',
+                                    name: 'authorships',
                                     label: 'Total Authorships',
                                     options: {
                                         sort: true,
                                         sortDirection: 'desc',
+                                        customBodyRender: renderCount
                                     }
                                 },
                                 {
-                                    name: 'textFirstAuthorships',
+                                    name: 'firstAuthorships',
                                     label: 'First Authorships',
                                     options: {
                                         sort: false,
-                                        display: false
+                                        display: false,
+                                        customBodyRender: renderWorkList
                                     }
                                 },
                                 {
-                                    name: 'numFirstAuthorships',
+                                    name: 'firstAuthorships',
                                     label: 'Total First Authorships',
                                     options: {
                                         sort: true,
+                                        customBodyRender: renderCount
                                     }
                                 },
                                 {
-                                    name: 'textLastAuthorships',
+                                    name: 'lastAuthorships',
                                     label: 'Last Authorships',
                                     options: {
                                         sort: false,
-                                        display: false
+                                        display: false,
+                                        customBodyRender: renderWorkList
                                     }
                                 },
                                 {
-                                    name: 'numLastAuthorships',
+                                    name: 'lastAuthorships',
                                     label: 'Total Last Authorships',
                                     options: {
                                         sort: true,
+                                        customBodyRender: renderCount
                                     }
                                 },
                             ]}
