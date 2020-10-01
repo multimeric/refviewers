@@ -1,7 +1,7 @@
 {
   "name": "refviewers",
   "version": "0.0.1",
-  "private": true,
+  "homepage": "https://tmiguelt.github.io/refviewers",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
